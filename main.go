@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -16,7 +17,7 @@ type Word struct {
 func main() {
 	router := gin.Default()
 
-	r := router.Group("/pusha")
+	r := router.Group(os.Getenv("DICT_API"))
 	r.GET(
 		"/wotd",
 		func(c *gin.Context) {
