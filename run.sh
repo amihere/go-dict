@@ -1,5 +1,6 @@
 #!/bin/bash
 
-export GIN_MODE=release
-go install . && info
+. ./export_vars.sh
+
+go install && info
 
