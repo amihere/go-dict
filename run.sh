@@ -2,5 +2,5 @@
 
 . ./export_vars.sh
 
-go install && info
+go install && fante
 

@@ -1,8 +1,8 @@
-package main
+package dictionary
 
-type definition struct {
-  id int
-  description string
-  phonetic string
-  name string
+type Definition struct {
+  Id int
+  Description string `json:"description"`
+  Phonetic string `json:"phonetic"`
+  Name string`json:"name"`
 }

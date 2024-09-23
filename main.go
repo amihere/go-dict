@@ -1,29 +1,29 @@
 package main
 
 import (
+	"database/sql"
 	"net/http"
 	"os"
 	"time"
+  "gogeta.io/fante/dictionary"
+  dbUtils "gogeta.io/fante/db"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/mattn/go-sqlite3"
 )
-
-type Word struct {
-	Meaning string
-	Basic   string
-	Id      int32
-}
 
 func main() {
 	router := gin.Default()
 
+  // db config
+  db, err := sql.Open("sqlite3", "./foo.db")
+  dbUtils.CheckError(err)
+  defer db.Close()
+
 	r := router.Group(os.Getenv("DICT_API"))
 	r.GET(
 		"/wotd",
-		func(c *gin.Context) {
-			word := Word{"Mentally disposed; willing m\u025Bk\u037B", "ready", 123}
-			c.JSON(http.StatusOK, word)
-		},
+    dictionary.GetWotd,
 	)
 	r.GET(
 		"/q", func(c *gin.Context) {
@@ -40,3 +40,4 @@ func main() {
 
 	s.ListenAndServe()
 }
+
