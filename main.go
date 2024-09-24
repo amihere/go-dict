@@ -26,9 +26,8 @@ func main() {
     dictionary.GetWotd,
 	)
 	r.GET(
-		"/q", func(c *gin.Context) {
-			c.JSON(http.StatusOK, gin.H{"ready": c.Query("w")})
-		},
+		"/q",
+    dictionary.Query,
 	)
 	s := &http.Server{
 		Addr:           ":8080",
