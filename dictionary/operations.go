@@ -6,7 +6,7 @@ import (
 )
 
 func GetWotd(c *gin.Context) {
-	word := Definition{2014, "Mentally disposed; willing m\u025Bk\u037B", "egq", "ready"}
+	word := DefinitionModel{2014, "Mentally disposed; willing m\u025Bk\u037B", "egq", "ready"}
 	c.JSON(http.StatusOK, word)
 }
 
