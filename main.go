@@ -1,3 +1,5 @@
+// entry point for app server
+// serveup data from db
 package main
 
 import (
