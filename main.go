@@ -3,24 +3,22 @@
 package main
 
 import (
-	"database/sql"
 	"net/http"
 	"os"
 	"time"
-  "gogeta.io/fante/dictionary"
-  dbUtils "gogeta.io/fante/db"
+
+	dbUtils "gogeta.io/fante/db"
+	"gogeta.io/fante/dictionary"
 
 	"github.com/gin-gonic/gin"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
 	router := gin.Default()
 
   // db config
-  db, err := sql.Open("sqlite3", "./foo.db")
-  dbUtils.CheckError(err)
-  defer db.Close()
+  _, cancel:= dbUtils.NewClient()
+  defer cancel()
 
 	r := router.Group(os.Getenv("DICT_API"))
 	r.GET(
