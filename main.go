@@ -4,8 +4,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -17,10 +15,10 @@ import (
 )
 
 func main() {
-  initDBFlag := flag.Bool("init", true, "Set to true to init the database")
-  flag.Parse()
+	initDBFlag := flag.Bool("init", false, "Set to true to init the database")
+	flag.Parse()
 
-  dictionary.SetupDatabase(*initDBFlag)
+	dictionary.SetupDatabase(*initDBFlag)
 
 	s := setupServer()
 
@@ -55,12 +53,5 @@ func getWotd(c *gin.Context) {
 
 func query(c *gin.Context) {
 	def, _ := dictionary.GetDefinition(c.Query("q"))
-  fmt.Printf("%v" ,def)
 	c.JSON(http.StatusOK, def)
-}
-
-func checkError(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
 }
