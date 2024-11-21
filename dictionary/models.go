@@ -1,3 +1,4 @@
+// Package dictionary all models and operations needed to persist data
 package dictionary
 
 import (
@@ -6,17 +7,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-
-	_ "github.com/mattn/go-sqlite3"
 )
 
+// DB is a SQL pool variable
 var DB *sql.DB
 
 type DefinitionModel struct {
-	Id          string `json:"id"`
-	Description string `json:"description"`
-	Phonetic    string `json:"phonetic"`
-	Name        string `json:"name"`
+	Id          string   `json:"id"`
+	Description string   `json:"description"`
+	Phonetic    string   `json:"phonetic"`
+	Name        string   `json:"name"`
+	Tags        []string `json:"tags"`
 }
 
 type Definition struct {
@@ -41,15 +42,16 @@ func AddDefinition(name string) bool {
 	return false
 }
 
+// GetDefinition finds a word using name for fuzzy find
 func GetDefinition(name string) (DefinitionModel, error) {
 	var def DefinitionModel
 
-  name += "%"
-  fmt.Println(name)
+	name += "%"
+	fmt.Println(name)
 	err := DB.QueryRow("SELECT definition FROM words WHERE definition->>'name' LIKE ?", name).Scan(&def)
 
 	if err != nil {
-    fmt.Println(err)
+		fmt.Println(err)
 	}
 	return def, err
 }
@@ -63,12 +65,13 @@ func getConn() error {
 	return nil
 }
 
+// SetupDatabase setup scripts for database connection and/or init
 func SetupDatabase(init bool) {
 	getConn()
 
-  if !init {
-    return
-  }
+	if !init {
+		return
+	}
 
 	DB.Exec(`create table words (definition jsonb)`)
 
