@@ -4,20 +4,19 @@ package main
 
 import (
 	"flag"
+	"github.com/gin-gonic/gin"
+	_ "github.com/mattn/go-sqlite3"
+	"gogeta.io/fante/dictionary"
 	"net/http"
 	"os"
 	"time"
-
-	_ "github.com/mattn/go-sqlite3"
-	"gogeta.io/fante/dictionary"
-
-	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	initDBFlag := flag.Bool("init", false, "Set to true to init the database")
 	flag.Parse()
 
+	dictionary.SetupMeili()
 	dictionary.SetupDatabase(*initDBFlag)
 
 	s := setupServer()

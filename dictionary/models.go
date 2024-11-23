@@ -2,10 +2,12 @@
 package dictionary
 
 import (
+	"github.com/meilisearch/meilisearch-go"
 	"database/sql"
 	"database/sql/driver"
 	"encoding/json"
 	"fmt"
+  "os"
 	"log"
 )
 
@@ -84,6 +86,27 @@ func SetupDatabase(init bool) {
 	_, err = stmt.Exec(string(marshalled))
 
 	failIfErr(err)
+}
+
+func SetupMeili() {
+  client := meilisearch.New("http://localhost:7700", meilisearch.WithAPIKey(os.Getenv("MEILI_KEY")))
+
+	// An index is where the documents are stored.
+	index := client.Index("movies")
+
+	// If the index 'movies' does not exist, Meilisearch creates it when you first add the documents.
+	documents := []map[string]interface{}{
+		{"id": 1, "title": "Carol", "genres": []string{"Romance", "Drama"}},
+		{"id": 2, "title": "Wonder Woman", "genres": []string{"Action", "Adventure"}},
+		{"id": 3, "title": "Life of Pi", "genres": []string{"Adventure", "Drama"}},
+		{"id": 4, "title": "Mad Max: Fury Road", "genres": []string{"Adventure", "Science Fiction"}},
+		{"id": 5, "title": "Moana", "genres": []string{"Fantasy", "Action"}},
+		{"id": 6, "title": "Philadelphia", "genres": []string{"Drama"}},
+	}
+	task, err := index.AddDocuments(documents)
+  failIfErr(err)
+
+	fmt.Println(task.TaskUID)
 }
 
 func failIfErr(err error) {
