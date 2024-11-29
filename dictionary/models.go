@@ -9,6 +9,7 @@ import (
 	"github.com/meilisearch/meilisearch-go"
 	"log"
 	"os"
+	"time"
 )
 
 // DB is a SQL pool variable
@@ -17,6 +18,7 @@ var DB *sql.DB
 // DefinitionModel - model object for word in dictionary
 type DefinitionModel struct {
 	ID          string   `json:"id"`
+	Updated     int      `json:"updated"`
 	Description string   `json:"description"`
 	Phonetic    string   `json:"phonetic"`
 	Name        string   `json:"name"`
@@ -98,7 +100,7 @@ func SetupDatabase(init bool) {
 	failIfErr(err)
 	defer stmt.Close()
 
-	def := DefinitionModel{ID: "796e9bd273244c4e5edabaad5bfc7b4", Name: "ready", Description: "Mentally disposed; willing m\u025Bk\u037B", Phonetic: "re_a_dyia"}
+	def := DefinitionModel{ID: "796e9bd273244c4e5edabaad5bfc7b4", Updated: int(time.Now().UTC().UnixMilli()), Name: "ready", Description: "Mentally disposed; willing m\u025Bk\u037B", Phonetic: "re_a_dyia"}
 	marshalled, _ := json.Marshal(def)
 	_, err = stmt.Exec(string(marshalled))
 
@@ -107,8 +109,8 @@ func SetupDatabase(init bool) {
 
 // SetupMeili should init meili driver pool
 func SetupMeili() {
-  meiliKey := os.Getenv("MEILI_KEY")
-  search := meilisearch.New("http://localhost:7700", meilisearch.WithAPIKey(meiliKey))
+	meiliKey := os.Getenv("MEILI_KEY")
+	search := meilisearch.New("http://localhost:7700", meilisearch.WithAPIKey(meiliKey))
 
 	// An index is where the documents are stored.
 	index := search.Index(getIndexName())
