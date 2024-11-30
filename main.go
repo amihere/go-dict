@@ -4,12 +4,13 @@ package main
 
 import (
 	"flag"
-	"github.com/gin-gonic/gin"
-	_ "github.com/mattn/go-sqlite3"
-	"gogeta.io/fante/dictionary"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	_ "github.com/mattn/go-sqlite3"
+	"gogeta.io/fante/dictionary"
 )
 
 func main() {
@@ -21,7 +22,7 @@ func main() {
 
 	s := setupServer()
 
-	s.ListenAndServe()
+	_ = s.ListenAndServe()
 }
 
 func setupServer() *http.Server {

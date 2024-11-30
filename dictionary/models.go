@@ -6,10 +6,11 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"fmt"
-	"github.com/meilisearch/meilisearch-go"
 	"log"
 	"os"
 	"time"
+
+	"github.com/meilisearch/meilisearch-go"
 )
 
 // DB is a SQL pool variable
@@ -59,10 +60,25 @@ func AddDefinition(name string) bool {
 
 // GetDefinition finds a word using name for fuzzy find
 func GetDefinition(name string) (DefinitionModel, error) {
-	fmt.Println(name)
 	// find the name using meili
+	meiliKey := os.Getenv("MEILI_KEY")
+	search := meilisearch.New("http://localhost:7700", meilisearch.WithAPIKey(meiliKey))
+	results, err := search.Index(getIndexName()).Search(name,
+		&meilisearch.SearchRequest{
+			Limit: 5,
+		})
+	if err != nil {
+		fmt.Println(err)
+	}
 
-	id := "796e9bd273244c4e5edabaad5bfc7b4"
+	val := results.Hits[0].(map[string]interface{})
+	fmt.Println(val)
+	fmt.Println(val["id"])
+
+	fmt.Println(results.Hits)
+
+	id := val["id"].(string)
+	// id := "796e9bd273244c4e5edabaad5bfc7b4"
 	return getDefinition(id)
 }
 
@@ -70,7 +86,6 @@ func getDefinition(id string) (DefinitionModel, error) {
 	var def DefinitionModel
 
 	err := DB.QueryRow("SELECT definition FROM words WHERE definition->>'id' = ?", id).Scan(&def)
-
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -120,10 +135,8 @@ func SetupMeili() {
 		{ID: "796e9bd273244c4e5edabaad5bfc7b4", Name: "ready", Tags: []string{"Fantasy", "Action"}},
 		{ID: "6", Name: "Philadelphia", Tags: []string{"Drama"}},
 	}
-	task, err := index.AddDocuments(documents)
+	_, err := index.AddDocuments(documents)
 	failIfErr(err)
-
-	fmt.Println(task.TaskUID)
 }
 
 func failIfErr(err error) {
